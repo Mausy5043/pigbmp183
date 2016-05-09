@@ -60,3 +60,7 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# OSX junk
+.DS_Store
+.AppleDouble
