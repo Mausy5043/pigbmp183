@@ -4,7 +4,23 @@
 ## Description
 This repository provides a Python class that can be used to read the temperature and pressure of a BMP183 using the SPI interface. The repository leans on [pigpio](https://github.com/joan2937/pigpio), which must be installed and running (obviously). This way the Python script can be exectued by any user **without** the use of `sudo`.
 
+## Requirements
+- Raspberry Pi
+- Raspbian with kernel version >= 4.4.8
+- Packages:
+  - `git`
+  - `python2.7` and/or `python3`
+  - `python-numpy`
+- Clone and install the GitHub repository `pigpio` from here: https://github.com/joan2937/pigpio
+- Clone and install the GitHub repository `pigbmp183` (this one) as described below.
+
 ## Installation
+```
+git clone https://github.com/Mausy5043/pigbmp183.git
+cd pigbmp183/
+chmod +x update.sh
+./update.sh
+```
 
 ## Execution
 Running:
