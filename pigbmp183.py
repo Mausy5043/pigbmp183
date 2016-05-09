@@ -164,11 +164,13 @@ class bmp183():
     # self.write_byte(self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['TEMP'])
     if self.pi.connected:
       hndl = self.pi.spi_open(0, 32000)
-      (cnt, rxd) = self.pi.spi_xfer(hndl, [self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['TEMP'], 0])
+      self.pi.spi_write(hndl, [self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['TEMP'])
+      # (cnt, rxd) = self.pi.spi_xfer(hndl, [self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['TEMP'], 0])
       # Wait
       time.sleep(self.BMP183_CMD['TEMP_WAIT'])
       # Read uncompensated temperature
       self.UT = numpy.int32(self.read_word(self.BMP183_REG['DATA']))
+      print "UT = {0}".format(self.UT)
       self.pi.spi_close(hndl)
     self.calculate_temperature()
 
