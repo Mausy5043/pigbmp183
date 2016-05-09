@@ -153,7 +153,7 @@ class bmp183():
     self.MC  = numpy.int16(self.read_word(self.BMP183_REG['CAL_MC']))
     self.MD  = numpy.int16(self.read_word(self.BMP183_REG['CAL_MD']))
     self.ID  = numpy.int16(self.read_byte(self.BMP183_REG['ID']))
-    self.ID  = numpy.int16(self.read_word(self.BMP183_REG['VER']))
+    self.VER = numpy.int16(self.read_word(self.BMP183_REG['VER']))
 
   def measure_temperature(self):
     # Start temperature measurement
