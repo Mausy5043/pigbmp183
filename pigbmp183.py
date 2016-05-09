@@ -123,6 +123,8 @@ class bmp183():
         # print ret_value
       else:
         print("Unexpected value: {0}".format(cnt))
+    else:
+      print("Unexpected error: not connected to pigpio while trying to read byte {0}".format(addr))
     return ret_value
 
   def read_word(self, addr, extra_bits=0):
@@ -137,6 +139,8 @@ class bmp183():
         # print ret_value
       else:
         print("Unexpected value: {0}".format(cnt))
+    else:
+      print("Unexpected error: not connected to pigpio while trying to read word {0}".format(addr))
     return ret_value
 
   def read_calibration_data(self):
@@ -157,11 +161,15 @@ class bmp183():
 
   def measure_temperature(self):
     # Start temperature measurement
-    self.write_byte(self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['TEMP'])
-    # Wait
-    time.sleep(self.BMP183_CMD['TEMP_WAIT'])
-    # Read uncompensated temperature
-    self.UT = numpy.int32(self.read_word(self.BMP183_REG['DATA']))
+    # self.write_byte(self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['TEMP'])
+    if self.pi.connected:
+      hndl = self.pi.spi_open(0, 32000)
+      (cnt, rxd) = self.pi.spi_xfer(hndl, [self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['TEMP'], 0])
+      # Wait
+      time.sleep(self.BMP183_CMD['TEMP_WAIT'])
+      # Read uncompensated temperature
+      self.UT = numpy.int32(self.read_word(self.BMP183_REG['DATA']))
+      self.pi.spi_close(hndl)
     self.calculate_temperature()
 
   def measure_pressure(self):
@@ -171,11 +179,11 @@ class bmp183():
     UP = {}
     for i in range(3):
       # Start pressure measurement
-      self.write_byte(self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['PRESS'] | (self.BMP183_CMD['OVERSAMPLE_3'] << 4))
+      # self.write_byte(self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['PRESS'] | (self.BMP183_CMD['OVERSAMPLE_3'] << 4))
       # Wait for conversion
       time.sleep(self.BMP183_CMD['OVERSAMPLE_3_WAIT'])
       # Store uncompensated pressure for averaging
-      UP[i] = numpy.int32(self.read_word(self.BMP183_REG['DATA'], 3))
+      UP[i] = 1013.15  # numpy.int32(self.read_word(self.BMP183_REG['DATA'], 3))
 
     self.UP = (UP[0] + UP[1] + UP[2]) / 3
     self.calculate_pressure()
