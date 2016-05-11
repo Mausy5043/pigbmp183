@@ -18,5 +18,5 @@ bmp.write_byte(0xF4, 0x2E)
 time.sleep(0.045)
 # Read uncmpensated temperature
 print("Reading value stored at 0xF6")
-F6 = read_word(0xF6))
-print "Value stored at 0xF6 : {0}".format(F6)
+F6 = bmp.read_word(0xF6)
+print("Value stored at 0xF6 : {0}".format(F6))
