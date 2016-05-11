@@ -8,7 +8,7 @@ bmp = bmp183()
 print("TEST2")
 
 # THIS WORKS:
-AA = bmp.spi_transfer(0xAA, 0, 1, 8)
+AA = bmp.spi_transfer(0xAA, 0, 1, 16)
 print("Value stored at 0xAA : {0}".format(AA))
 
 # THIS *ALSO* WORKS:
