@@ -162,7 +162,7 @@ class bmp183():
   def measure_temperature(self):
     # Start temperature measurement
     # self.write_byte(self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['TEMP'])
-    UT = -273.15
+    F6 = 26400
     if self.pi.connected:
       hndl = self.pi.spi_open(0, 34000)
       self.pi.spi_write(hndl, [self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['TEMP'], 0])
@@ -174,12 +174,13 @@ class bmp183():
       self.pi.spi_close(hndl)
       # Evaluate result
       if cnt > 0:
-        UT = (rxd[1] << 8) + rxd[2]
-        print(">>>> Value stored at 0xF6 : {0}".format(UT))
+        F6 = (rxd[1] << 8) + rxd[2]
+        print(">>>> Value stored at 0xF6 : {0}".format(F6))
       else:
         print("Unexpected return length: {0}".format(cnt))
     else:
       print("Unexpected error: not connected to pigpio while trying to read temperature"
+    self.UT = numpy.int32(F6)
     self.calculate_temperature()
 
   def measure_pressure(self):
