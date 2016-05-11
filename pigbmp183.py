@@ -165,12 +165,12 @@ class bmp183():
     UT = -273.15
     if self.pi.connected:
       hndl = self.pi.spi_open(0, 34000)
-      self.pi.spi_write(hndl, [self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['TEMP'], 0)
+      self.pi.spi_write(hndl, [self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['TEMP'], 0])
       # Wait
       time.sleep(self.BMP183_CMD['TEMP_WAIT'])
       # Read uncompensated temperature
       # self.UT = numpy.int32(self.read_word(self.BMP183_REG['DATA']))
-      (cnt, rxd) = pi.spi_xfer(hndl, [self.BMP183_REG['DATA'], 0, 0])
+      (cnt, rxd) = self.pi.spi_xfer(hndl, [self.BMP183_REG['DATA'], 0, 0])
       self.pi.spi_close(hndl)
       # Evaluate result
       if cnt > 0:
@@ -179,7 +179,7 @@ class bmp183():
       else:
         print("Unexpected return length: {0}".format(cnt))
     else:
-      print("Unexpected error: not connected to pigpio while trying to read word {0}".format(addr))
+      print("Unexpected error: not connected to pigpio while trying to read temperature"
     self.calculate_temperature()
 
   def measure_pressure(self):
