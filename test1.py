@@ -27,6 +27,17 @@ if pi.connected:
     F6 = (rxd[1] << 8) + rxd[2]
     print(">>>> Value stored at 0xF6 : {0}".format(F6))
 
+  # THIS DOESN'T WORK:
+  print("Writing value 0x34 into address 0xF4")
+  pi.spi_write(hndl, [0xF4, 0x34, 0])
+  # Wait
+  time.sleep(0.045)
+  print("Reading value stored at 0xF6")
+  (cnt, rxd) = pi.spi_xfer(hndl, [0xF6, 0, 0])
+  if cnt > 0:
+    F6 = (rxd[1] << 8) + rxd[2]
+    print(">>>> Value stored at 0xF6 : {0}".format(F6))
+
   pi.spi_close(hndl)
 
 pi.stop()
