@@ -115,30 +115,30 @@ class bmp183():
     # Read byte from SPI interface from address "addr"
     ret_value = -1
     if self.pi.connected:
-      hndl = self.pi.spi_open(0, 32000)
-      (cnt, rxd) = self.pi.spi_xfer(hndl, [addr, 0])
+      hndl = self.pi.spi_open(0, 34000)
+      (cnt, rxd) = self.pi.spi_xfer(hndl, [addr, 0, 0])
       self.pi.spi_close(hndl)
+      # Evaluate result
       if cnt == 2:
         ret_value = rxd[1]
-        # print ret_value
       else:
-        print("Unexpected value: {0}".format(cnt))
+        print("Unexpected return length: {0}".format(cnt))
     else:
       print("Unexpected error: not connected to pigpio while trying to read byte {0}".format(addr))
     return ret_value
 
-  def read_word(self, addr, extra_bits=0):
+  def read_word(self, addr):
     # Read word from SPI interface from address "addr", option to extend read by up to 3 bits
     ret_value = -1
     if self.pi.connected:
-      hndl = self.pi.spi_open(0, 32000)
+      hndl = self.pi.spi_open(0, 34000)
       (cnt, rxd) = self.pi.spi_xfer(hndl, [addr, 0, 0])
       self.pi.spi_close(hndl)
+      # Evaluate result
       if cnt == 3:
         ret_value = (rxd[1] << 8) + rxd[2]
-        # print ret_value
       else:
-        print("Unexpected value: {0}".format(cnt))
+        print("Unexpected return length: {0}".format(cnt))
     else:
       print("Unexpected error: not connected to pigpio while trying to read word {0}".format(addr))
     return ret_value
@@ -162,18 +162,24 @@ class bmp183():
   def measure_temperature(self):
     # Start temperature measurement
     # self.write_byte(self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['TEMP'])
+    UT = -273.15
     if self.pi.connected:
-      hndl = self.pi.spi_open(0, 32000)
-      self.pi.spi_write(hndl, [self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['TEMP'])
-      # (cnt, rxd) = self.pi.spi_xfer(hndl, [self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['TEMP'], 0])
+      hndl = self.pi.spi_open(0, 34000)
+      self.pi.spi_write(hndl, [self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['TEMP'], 0)
       # Wait
       time.sleep(self.BMP183_CMD['TEMP_WAIT'])
       # Read uncompensated temperature
       # self.UT = numpy.int32(self.read_word(self.BMP183_REG['DATA']))
-      (count, rxd) = self.pi.spi_read(hndl, 3)
-      pritn rxd[0], rxd[1], rxd[2]
-      print "UT = {0}".format(self.UT)
+      (cnt, rxd) = pi.spi_xfer(hndl, [self.BMP183_REG['DATA'], 0, 0])
       self.pi.spi_close(hndl)
+      # Evaluate result
+      if cnt > 0:
+        UT = (rxd[1] << 8) + rxd[2]
+        print(">>>> Value stored at 0xF6 : {0}".format(UT))
+      else:
+        print("Unexpected return length: {0}".format(cnt))
+    else:
+      print("Unexpected error: not connected to pigpio while trying to read word {0}".format(addr))
     self.calculate_temperature()
 
   def measure_pressure(self):

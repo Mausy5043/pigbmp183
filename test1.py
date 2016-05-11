@@ -7,7 +7,7 @@ pi = pigpio.pi()
 
 if pi.connected:
   print("TEST 1")
-  hndl = pi.spi_open(0, 1000000)
+  hndl = pi.spi_open(0, 34000)
 
   # THIS WORKS:
   print("Reading value stored at 0xAA")
