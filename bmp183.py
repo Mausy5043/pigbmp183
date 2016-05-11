@@ -177,19 +177,6 @@ class bmp183():
     self.MC = numpy.int16(self.read_word(self.BMP183_REG['CAL_MC']))
     self.MD = numpy.int16(self.read_word(self.BMP183_REG['CAL_MD']))
     self.ID = numpy.int16(self.read_byte(self.BMP183_REG['ID']))
-    print "CALIBRATION DATA"
-    print "AC1: {0}".format(self.AC1)
-    print "AC2: {0}".format(self.AC2)
-    print "AC3: {0}".format(self.AC3)
-    print "AC4: {0}".format(self.AC4)
-    print "AC5: {0}".format(self.AC5)
-    print "B1:  {0}".format(self.B1)
-    print "B2:  {0}".format(self.B2)
-    print "MB:  {0}".format(self.MB)
-    print "MC:  {0}".format(self.MC)
-    print "MD:  {0}".format(self.MD)
-    print "ID:  {0}".format(self.ID)
-    print ""
 
   def measure_temperature(self):
     # Start temperature measurement
