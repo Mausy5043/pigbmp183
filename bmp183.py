@@ -185,7 +185,6 @@ class bmp183():
     time.sleep(self.BMP183_CMD['TEMP_WAIT'])
     # Read uncmpensated temperature
     self.UT = numpy.int32(self.read_word(self.BMP183_REG['DATA']))
-    print "UT = {0}".format(self.UT)
     self.calculate_temperature()
 
   def measure_pressure(self):
