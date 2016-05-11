@@ -116,7 +116,7 @@ class bmp183():
     ret_value = -1
     if self.pi.connected:
       hndl = self.pi.spi_open(0, 34000)
-      (cnt, rxd) = self.pi.spi_xfer(hndl, [addr, 0, 0])
+      (cnt, rxd) = self.pi.spi_xfer(hndl, [addr, 0])
       self.pi.spi_close(hndl)
       # Evaluate result
       if cnt == 2:
@@ -176,10 +176,11 @@ class bmp183():
       if cnt > 0:
         F6 = (rxd[1] << 8) + rxd[2]
         print(">>>> Value stored at 0xF6 : {0}".format(F6))
+        self.UT = numpy.int32(F6)
       else:
         print("Unexpected return length: {0}".format(cnt))
     else:
-      print("Unexpected error: not connected to pigpio while trying to read temperature"
+      print("Unexpected error: not connected to pigpio while trying to read temperature")
     self.UT = numpy.int32(F6)
     self.calculate_temperature()
 
