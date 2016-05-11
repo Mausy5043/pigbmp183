@@ -161,7 +161,6 @@ class bmp183():
 
   def measure_temperature(self):
     # Start temperature measurement
-    # self.write_byte(self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['TEMP'])
     F6 = 26400
     if self.pi.connected:
       hndl = self.pi.spi_open(0, 34000)
@@ -169,9 +168,7 @@ class bmp183():
       # Wait
       time.sleep(self.BMP183_CMD['TEMP_WAIT'])
       # Read uncompensated temperature
-      # self.UT = numpy.int32(self.read_word(self.BMP183_REG['DATA']))
       (cnt, rxd) = self.pi.spi_xfer(hndl, [self.BMP183_REG['DATA'], 0, 0])
-      self.pi.spi_close(hndl)
       # Evaluate result
       if cnt > 0:
         F6 = (rxd[1] << 8) + rxd[2]
@@ -179,6 +176,8 @@ class bmp183():
         self.UT = numpy.int32(F6)
       else:
         print("Unexpected return length: {0}".format(cnt))
+      # close SPI
+      self.pi.spi_close(hndl)
     else:
       print("Unexpected error: not connected to pigpio while trying to read temperature")
     self.UT = numpy.int32(F6)
@@ -189,14 +188,27 @@ class bmp183():
     self.measure_temperature()
     # Read 3 samples of uncompensated pressure
     UP = {}
-    for i in range(3):
-      # Start pressure measurement
-      # self.write_byte(self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['PRESS'] | (self.BMP183_CMD['OVERSAMPLE_3'] << 4))
-      # Wait for conversion
-      time.sleep(self.BMP183_CMD['OVERSAMPLE_3_WAIT'])
-      # Store uncompensated pressure for averaging
-      UP[i] = 1013.15  # numpy.int32(self.read_word(self.BMP183_REG['DATA'], 3))
-
+    F6 = 26400
+    if self.pi.connected:
+      hndl = self.pi.spi_open(0, 34000)
+      for i in range(3):
+        self.pi.spi_write(hndl, [self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['PRESS'], 0])
+        # oversampling:  + (self.BMP183_CMD['OVERSAMPLE_3'] << 6)
+        # Wait
+        time.sleep(self.BMP183_CMD['OVERSAMPLE_3_WAIT'])
+        (cnt, rxd) = self.pi.spi_xfer(hndl, [self.BMP183_REG['DATA'], 0, 0, 0])
+        # Evaluate result
+        if cnt > 0:
+          F6 = ((rxd[1] << 16) + (rxd[2] << 8) + rxd[3]) >> 8
+          print(">>P> Value stored at 0xF6 : {0}".format(F6))
+          UP[i] = numpy.int32(F6)
+        else:
+          print("Unexpected return length: {0}".format(cnt))
+      # close SPI
+      self.pi.spi_close(hndl)
+    else:
+      print("Unexpected error: not connected to pigpio while trying to read temperature")
+    # Store uncompensated pressure for averaging
     self.UP = (UP[0] + UP[1] + UP[2]) / 3
     self.calculate_pressure()
 
