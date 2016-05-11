@@ -169,7 +169,9 @@ class bmp183():
       # Wait
       time.sleep(self.BMP183_CMD['TEMP_WAIT'])
       # Read uncompensated temperature
-      self.UT = numpy.int32(self.read_word(self.BMP183_REG['DATA']))
+      # self.UT = numpy.int32(self.read_word(self.BMP183_REG['DATA']))
+      (count, rxd) = self.pi.spi_read(hndl, 3)
+      pritn rxd[0], rxd[1], rxd[2]
       print "UT = {0}".format(self.UT)
       self.pi.spi_close(hndl)
     self.calculate_temperature()
