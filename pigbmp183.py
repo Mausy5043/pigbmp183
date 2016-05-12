@@ -194,14 +194,13 @@ class bmp183():
     if self.pi.connected:
       hndl = self.pi.spi_open(0, 34000)
       for i in range(3):
-        self.pi.spi_write(hndl, [self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['PRESS'], 0])
-        # oversampling:  + (self.BMP183_CMD['OVERSAMPLE_3'] << 6)
+        self.pi.spi_write(hndl, [self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['PRESS'], 0]) + (self.BMP183_CMD['OVERSAMPLE_3'] << 6)
         # Wait
         time.sleep(self.BMP183_CMD['OVERSAMPLE_3_WAIT'])
         (cnt, rxd) = self.pi.spi_xfer(hndl, [self.BMP183_REG['DATA'], 0, 0, 0])
         # Evaluate result
         if cnt > 0:
-          F6 = ((rxd[1] << 16) + (rxd[2] << 8) + rxd[3]) >> 8
+          F6 = ((rxd[1] << 16) + (rxd[2] << 8) + rxd[3]) >> (8 - self.BMP183_CMD['OVERSAMPLE_3')
           print(">>P> Value stored at 0xF6 : {0}".format(F6))
           UP[i] = numpy.int32(F6)
         else:
