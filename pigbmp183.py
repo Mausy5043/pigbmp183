@@ -46,9 +46,11 @@ class bmp183():
     'SOFT_RESET':         0xE0,
 
     # @ CTRL_MEAS Controls measurements
-    'CTRL_MEAS':          0xF4,
+    # In order to *WRITE* to address 0xF4 you need to clear bit 8 in the SPI commands
+    'CTRL_MEAS':          0x74,
 
     # @ DATA
+    # In order to *READ* from address 0xF6 no adjustment is needed (bit 8 = 1)
     'DATA':               0xF6,
   }
 
@@ -172,7 +174,7 @@ class bmp183():
       # Evaluate result
       if cnt > 0:
         F6 = (rxd[1] << 8) + rxd[2]
-        print(">>>> Value stored at 0xF6 : {0}".format(F6))
+        print(">>T> Value stored at 0xF6 : {0}".format(F6))
         self.UT = numpy.int32(F6)
       else:
         print("Unexpected return length: {0}".format(cnt))

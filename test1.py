@@ -18,7 +18,7 @@ if pi.connected:
 
   # THIS DOESN'T WORK:
   print("Writing value 0x2E into address 0xF4")
-  pi.spi_write(hndl, [0xF4, 0x2E, 0])
+  pi.spi_write(hndl, [0x74, 0x2E, 0])
   # Wait
   time.sleep(0.045)
   print("Reading value stored at 0xF6")
@@ -29,7 +29,7 @@ if pi.connected:
 
   # THIS DOESN'T WORK:
   print("Writing value 0x34 into address 0xF4")
-  pi.spi_write(hndl, [0xF4, 0x34, 0])
+  pi.spi_write(hndl, [0x74, 0x34, 0])
   # Wait
   time.sleep(0.045)
   print("Reading value stored at 0xF6")
