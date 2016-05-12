@@ -3,6 +3,9 @@
 import pigpio
 import time
 
+"""
+This Python script tests the pigpio low-level calls
+"""
 pi = pigpio.pi()
 
 if pi.connected:

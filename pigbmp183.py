@@ -37,7 +37,6 @@ class bmp183():
 
     # @ Chip ID. Value fixed to 0x55. Useful to check if communication works
     'ID':                 0xD0,
-    'ID_VALUE':           0x55,
 
     # @ VER Undocumented
     'VER':                0xD1,
@@ -58,9 +57,6 @@ class bmp183():
   BMP183_CMD = {
     # @ Chip ID Value fixed to 0x55. Useful to check if communication works
     'ID_VALUE':           0x55,
-
-    # SPI bit to indicate READ or WRITE operation
-    'READWRITE':          0x80,
 
     # Read TEMPERATURE, Wait time 4.5 ms
     'TEMP':               0x2E,
@@ -85,16 +81,14 @@ class bmp183():
     self.temperature = 0
     self.pressure    = 0
     # Setup Raspberry Pi **pinnumbers**, as numbered on BOARD
-    self.SCK         = 23  # GPIO for SCLK
-    self.SDO         = 21  # GPIO for MISO
-    self.SDI         = 19  # GPIO for MOSI
-    self.CS          = 24  # GPIO for CE0
+    self.SCK         = 23  # pin for SCLK
+    self.SDO         = 21  # pin for MISO
+    self.SDI         = 19  # pin for MOSI
+    self.CS          = 24  # pin for CE0
 
-    # SCLK frequency 1 MHz
-    self.delay       = 1 / 1000000.0
     self.set_up_pigpio()
 
-    # Check comunication / read ID
+    # Check communication / read ID
     ret = self.read_byte(self.BMP183_REG['ID'])
     if ret != self.BMP183_CMD['ID_VALUE']:
       print ("BMP183 returned ", ret, " instead of 0x55. Communication failed, expect problems.")
@@ -117,7 +111,7 @@ class bmp183():
     # Read byte from SPI interface from address "addr"
     ret_value = -1
     if self.pi.connected:
-      hndl = self.pi.spi_open(0, 34000)
+      hndl = self.pi.spi_open(0, 34000, 3)
       (cnt, rxd) = self.pi.spi_xfer(hndl, [addr, 0])
       self.pi.spi_close(hndl)
       # Evaluate result
@@ -130,10 +124,10 @@ class bmp183():
     return ret_value
 
   def read_word(self, addr):
-    # Read word from SPI interface from address "addr", option to extend read by up to 3 bits
+    # Read word from SPI interface from address "addr"
     ret_value = -1
     if self.pi.connected:
-      hndl = self.pi.spi_open(0, 34000)
+      hndl = self.pi.spi_open(0, 34000, 3)
       (cnt, rxd) = self.pi.spi_xfer(hndl, [addr, 0, 0])
       self.pi.spi_close(hndl)
       # Evaluate result
@@ -165,7 +159,7 @@ class bmp183():
     # Start temperature measurement
     F6 = 26400
     if self.pi.connected:
-      hndl = self.pi.spi_open(0, 34000)
+      hndl = self.pi.spi_open(0, 34000, 3)
       self.pi.spi_write(hndl, [self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['TEMP'], 0])
       # Wait
       time.sleep(self.BMP183_CMD['TEMP_WAIT'])
@@ -182,6 +176,7 @@ class bmp183():
       self.pi.spi_close(hndl)
     else:
       print("Unexpected error: not connected to pigpio while trying to read temperature")
+    # Store uncompensated temperature
     self.UT = numpy.int32(F6)
     self.calculate_temperature()
 
@@ -192,7 +187,7 @@ class bmp183():
     UP = {}
     F6 = 26400
     if self.pi.connected:
-      hndl = self.pi.spi_open(0, 34000)
+      hndl = self.pi.spi_open(0, 34000, 3)
       for i in range(3):
         self.pi.spi_write(hndl, [self.BMP183_REG['CTRL_MEAS'], self.BMP183_CMD['PRESS'], 0]) + (self.BMP183_CMD['OVERSAMPLE_3'] << 6)
         # Wait
@@ -209,7 +204,7 @@ class bmp183():
       self.pi.spi_close(hndl)
     else:
       print("Unexpected error: not connected to pigpio while trying to read temperature")
-    # Store uncompensated pressure for averaging
+    # Store average uncompensated pressure
     self.UP = (UP[0] + UP[1] + UP[2]) / 3
     self.calculate_pressure()
 
