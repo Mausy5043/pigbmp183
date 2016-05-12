@@ -195,7 +195,7 @@ class bmp183():
         (cnt, rxd) = self.pi.spi_xfer(hndl, [self.BMP183_REG['DATA'], 0, 0, 0])
         # Evaluate result
         if cnt > 0:
-          F6 = ((rxd[1] << 16) + (rxd[2] << 8) + rxd[3]) >> (8 - self.BMP183_CMD['OVERSAMPLE_3')
+          F6 = ((rxd[1] << 16) + (rxd[2] << 8) + rxd[3]) >> (8 - self.BMP183_CMD['OVERSAMPLE_3'])
           print(">>P> Value stored at 0xF6 : {0}".format(F6))
           UP[i] = numpy.int32(F6)
         else:
