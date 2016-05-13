@@ -6,7 +6,7 @@ This repository provides a Python class that can be used to read the temperature
 
 ## Requirements
 - Raspberry Pi
-- Raspbian with kernel version >= 4.4.8
+- Raspbian with kernel version >= 4.4.8 (confirmed working on: 4.4.8+ #880 Fri Apr 22 21:27:42 BST 2016 armv6l GNU/Linux)
 - Packages:
   - `git`
   - `python2.7` and/or `python3`
@@ -25,6 +25,8 @@ chmod +x update.sh
 ## Execution
 Running:
 `python pigmeasure.py`
+
+Use `pigmeasure.py` as an example for your own use case.
 
 For continuous measurement run:
 `watch -n 12 python pigmeasure.py`

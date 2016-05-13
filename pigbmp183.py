@@ -117,10 +117,6 @@ class bmp183():
       # Evaluate result
       if cnt == 2:
         ret_value = rxd[1]
-    #   else:
-    #     print("Unexpected return length: {0}".format(cnt))
-    # else:
-    #   print("Unexpected error: not connected to pigpio while trying to read byte {0}".format(addr))
     return ret_value
 
   def read_word(self, addr):
@@ -133,10 +129,6 @@ class bmp183():
       # Evaluate result
       if cnt == 3:
         ret_value = (rxd[1] << 8) + rxd[2]
-    #   else:
-    #     print("Unexpected return length: {0}".format(cnt))
-    # else:
-    #   print("Unexpected error: not connected to pigpio while trying to read word {0}".format(addr))
     return ret_value
 
   def read_calibration_data(self):
@@ -170,12 +162,8 @@ class bmp183():
         F6 = (rxd[1] << 8) + rxd[2]
         # print(">>T> Value stored at 0xF6 : {0}".format(F6))
         self.UT = numpy.int32(F6)
-      # else:
-      #   print("Unexpected return length: {0}".format(cnt))
       # close SPI
       self.pi.spi_close(hndl)
-    # else:
-    #   print("Unexpected error: not connected to pigpio while trying to read temperature")
     # Store uncompensated temperature
     self.UT = numpy.int32(F6)
     self.calculate_temperature()
@@ -198,12 +186,8 @@ class bmp183():
           F6 = ((rxd[1] << 16) + (rxd[2] << 8) + rxd[3]) >> (8 - self.BMP183_CMD['OVERSAMPLE_3'])
           # print(">>P> Value stored at 0xF6 : {0}".format(F6))
           UP[i] = numpy.int32(F6)
-        # else:
-        #  print("Unexpected return length: {0}".format(cnt))
       # close SPI
       self.pi.spi_close(hndl)
-    # else:
-    #   print("Unexpected error: not connected to pigpio while trying to read temperature")
     # Store average uncompensated pressure
     self.UP = (UP[0] + UP[1] + UP[2]) / 3
     self.calculate_pressure()
