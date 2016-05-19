@@ -38,7 +38,7 @@ Pressure   : 999.75 hPa
 ```
 
 ## Raspberry Pi I/O
-Connect the BMP183 [(as sold by Adafruit)](https://www.adafruit.com/product/1900) as follows:
+Connect the BMP183 [(as sold by Adafruit)](https://www.adafruit.com/product/1900) as shown below to a **Raspberry Pi 1 B+**. Other hardware versions will work too, but were not tested by me. So, you'll have to figure out the correct pins.
 ```
 BMP pin : RPi pin
 ========:====================
